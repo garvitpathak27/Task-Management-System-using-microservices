@@ -5,9 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c67da803-df2c-4e52-b76f-66886ddeae27" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/APIGateWay/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/APIGateWay/src/main/resources/application-docker.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EurekaServerConfiguration/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EurekaServerConfiguration/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TaskService/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TaskSubmissionService/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TaskUserService/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TaskUserService/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TaskService/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/UserService/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +32,13 @@
         <projects_view />
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,6 +62,9 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="2cMQfo36h3efNXGKSYcbJDFQpZy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
