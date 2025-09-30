@@ -5,7 +5,8 @@
 This project implements a Task Management system using microservices architecture. The system consists of three main microservices: UserService, TaskService, and TaskSubmissionService. Additionally, Eureka is used for service discovery, and an API Gateway is implemented to manage API requests.
 
 ## Microservices Architecture
-![Task Management System Architecture](https://github.com/iamgarvit123/Task-Management-System/raw/master/tms.png)
+![Task Management System Architecture](https://github.com/garvitpathak27/Task-Management-System-using-microservices
+/raw/master/tms.png)
 
 ## Technologies Used
 
@@ -173,7 +174,7 @@ The `API Gateway` serves as the single entry point for the Task Management syste
   - Enhances the simplicity of communication between client applications and microservices.
   - Utilizes Spring Cloud Gateway's flexibility for routing and load balancing.
 ## Final Endpoints
-![Task Management System Architecture](https://github.com/iamgarvit123/Task-Management-System/raw/master/endpoints.png)
+![Task Management System Architecture](https://github.com/garvitpathak27/Task-Management-System-using-microservices/raw/master/endpoints.png)
 
 
 ## Getting Started
