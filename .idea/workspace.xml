@@ -6,27 +6,57 @@
   <component name="ChangeListManager">
     <list default="true" id="c67da803-df2c-4e52-b76f-66886ddeae27" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" afterPath="$PROJECT_DIR$/.project" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/APIGateWay/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/APIGateWay/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EurekaServerConfiguration/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServerConfiguration/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TaskService/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TaskUserService/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/AppConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/UserServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/model/LoginRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/model/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/java/in/mahesh/tasks/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/src/test/java/in/mahesh/tasks/UserServiceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/APIGateWay/src/main/java/in/mahesh/tasks/ApiGateWayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/APIGateWay/src/main/java/in/garvit/tasks/ApiGateWayApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APIGateWay/src/test/java/in/mahesh/tasks/ApiGateWayApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/APIGateWay/src/test/java/in/garvit/tasks/ApiGateWayApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServerConfiguration/src/main/java/in/mahesh/tasks/EurekaServerConfigurationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServerConfiguration/src/main/java/in/garvit/tasks/EurekaServerConfigurationApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServerConfiguration/src/test/java/in/mahesh/tasks/EurekaServerConfigurationApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServerConfiguration/src/test/java/in/garvit/tasks/EurekaServerConfigurationApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/TaskServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/TaskServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/controller/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/controller/TaskController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/enums/TaskStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/enums/TaskStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/repository/TaskRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/repository/TaskRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/service/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/service/TaskService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/service/TaskServiceImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/service/TaskServiceImplementation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/taskModel/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/taskModel/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/main/java/in/mahesh/tasks/taskModel/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/main/java/in/garvit/tasks/taskModel/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskService/src/test/java/in/mahesh/tasks/TaskServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskService/src/test/java/in/garvit/tasks/TaskServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/TaskSubmissionServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/TaskSubmissionServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/controller/SubController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/controller/SubController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/repository/SubRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/repository/SubRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/service/SubServiceImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/service/SubServiceImp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/service/SubmissionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/service/SubmissionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/service/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/service/TaskService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/submissionModel/TaskDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/submissionModel/TaskDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/submissionModel/TaskStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/submissionModel/TaskStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/submissionModel/TaskSubmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/submissionModel/TaskSubmission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/mahesh/tasks/submissionModel/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/main/java/in/garvit/tasks/submissionModel/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskSubmissionService/src/test/java/in/mahesh/tasks/TaskSubmissionServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskSubmissionService/src/test/java/in/garvit/tasks/TaskSubmissionServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/TaskUserServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/TaskUserServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/exception/UserException.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/exception/UserException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/request/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/request/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/response/ApiResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/response/ApiResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/response/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/response/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/service/CustomerServiceImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/service/CustomerServiceImplementation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/service/UserServiceImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/service/UserServiceImplementation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/taskSecurityConfig/ApplicatonConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/taskSecurityConfig/ApplicatonConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/taskSecurityConfig/JwtConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/taskSecurityConfig/JwtConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/taskSecurityConfig/JwtProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/taskSecurityConfig/JwtProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/taskSecurityConfig/JwtTokenValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/taskSecurityConfig/JwtTokenValidator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/main/java/in/mahesh/tasks/usermodel/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/main/java/in/garvit/tasks/usermodel/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/test/java/in/mahesh/tasks/TaskUserServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/test/java/in/garvit/tasks/TaskUserServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/test/java/in/mahesh/tasks/controller/AuthControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/test/java/in/garvit/tasks/controller/AuthControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/test/java/in/mahesh/tasks/controller/HomeControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/test/java/in/garvit/tasks/controller/HomeControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/test/java/in/mahesh/tasks/controller/UserControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/test/java/in/garvit/tasks/controller/UserControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TaskUserService/src/test/java/in/mahesh/tasks/controllerTest/AuthControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/TaskUserService/src/test/java/in/garvit/tasks/controllerTest/AuthControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +111,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Gradle.C:/Users/Mahesh/Documents/workspace-spring-tool-suite-4-4.21.0.RELEASE/Task ManagementSystem/EurekaServerConfiguration.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.C:/Users/garvit/Documents/workspace-spring-tool-suite-4-4.21.0.RELEASE/Task ManagementSystem/EurekaServerConfiguration.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.Gradle.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -90,7 +120,7 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/garvitpathak27/cloud_computing/Task-Management-System-using-microservices&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/garvitpathak27/cloud_computing/Task-Management-System-using-microservices/TaskService/src/main/java/in&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -103,8 +133,13 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/TaskService/src/main/java/in" />
+    </key>
+  </component>
   <component name="RunManager">
-    <configuration name="C:/Users/Mahesh/Documents/workspace-spring-tool-suite-4-4.21.0.RELEASE/Task ManagementSystem/EurekaServerConfiguration" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
+    <configuration name="C:/Users/garvit/Documents/workspace-spring-tool-suite-4-4.21.0.RELEASE/Task ManagementSystem/EurekaServerConfiguration" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/EurekaServerConfiguration" />
