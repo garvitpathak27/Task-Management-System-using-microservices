@@ -1,5 +1,34 @@
-{"properties": [{
-  "name": "//",
-  "type": "java.lang.String",
-  "description": "A description for '//'"
-}]}
+{
+  "properties": [
+    {
+      "name": "eureka.server.enable-self-preservation",
+      "type": "java.lang.Boolean",
+      "description": "Enable self-preservation mode in Eureka server.",
+      "defaultValue": true
+    },
+    {
+      "name": "eureka.server.renewal-percent-threshold",
+      "type": "java.lang.Double",
+      "description": "The minimum percentage of renewals that is expected from the clients in the specified renewal interval.",
+      "defaultValue": 0.85
+    },
+    {
+      "name": "eureka.server.eviction-interval-timer-in-ms",
+      "type": "java.lang.Integer",
+      "description": "The time interval with which the task that expires instances should wake up and run.",
+      "defaultValue": 30000
+    },
+    {
+      "name": "eureka.server.response-cache-update-interval-ms",
+      "type": "java.lang.Integer",
+      "description": "The time interval with which the payload cache of the client should be updated.",
+      "defaultValue": 30000
+    },
+    {
+      "name": "eureka.server.response-cache-auto-expiration-in-seconds",
+      "type": "java.lang.Integer",
+      "description": "The time for which the registry payload should be kept in the cache if it is not invalidated by change events.",
+      "defaultValue": 180
+    }
+  ]
+}

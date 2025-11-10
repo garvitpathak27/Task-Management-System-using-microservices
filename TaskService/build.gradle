@@ -36,6 +36,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.2'
 
 //zipkin tracing
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'

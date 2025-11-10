@@ -4,11 +4,19 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group = 'in.garvit.tasks'
+version = '1.0.0'
+description = 'Eureka Server Configuration for Task Management Microservices'
 
 java {
 	sourceCompatibility = '17'
+	targetCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
@@ -20,22 +28,25 @@ ext {
 }
 
 dependencies {
+	// Core Spring Boot and Eureka dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
-  implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	//zipkin tracing
+	
+	// Monitoring and Observability
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
-	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-sleuth
-	//implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-sleuth', version: '3.1.11'
-
-	// Zipkin server dependency
-	//implementation 'io.zipkin.java:zipkin-server:2.12.9'
-
-	// Zipkin autoconfigure UI dependency (runtime scope)
-	//runtimeOnly 'io.zipkin.java:zipkin-autoconfigure-ui:2.12.9'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	
+	// Logging
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+	
+	// Development tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	
+	// Testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
@@ -46,4 +57,19 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+// JAR configuration
+jar {
+	enabled = false
+	archiveClassifier = ''
+}
+
+bootJar {
+	enabled = true
+	archiveClassifier = ''
+	archiveFileName = 'eureka-server.jar'
 }

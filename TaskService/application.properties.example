@@ -1,0 +1,129 @@
+# ========================================
+# Task Service Configuration Properties
+# ========================================
+
+# -----------------------------------------
+# Server Configuration
+# -----------------------------------------
+# Port on which the Task Service will run
+server.port=8082
+
+# -----------------------------------------
+# MongoDB Configuration
+# -----------------------------------------
+# MongoDB connection URI
+# Format: mongodb://<host>:<port>/<database>
+# For Docker: mongodb://mongodb:27017/tasks
+# For localhost: mongodb://localhost:27017/tasks
+spring.data.mongodb.uri=mongodb://localhost:27017/tasks
+
+# Alternative MongoDB configuration (if using individual properties)
+# spring.data.mongodb.host=localhost
+# spring.data.mongodb.port=27017
+# spring.data.mongodb.database=tasks
+# spring.data.mongodb.username=admin
+# spring.data.mongodb.password=password
+# spring.data.mongodb.authentication-database=admin
+
+# -----------------------------------------
+# Application Configuration
+# -----------------------------------------
+# Name of the service (used for Eureka registration)
+spring.application.name=TASK-SERVICE
+
+# -----------------------------------------
+# Eureka Client Configuration
+# -----------------------------------------
+# Use IP address instead of hostname for service registration
+eureka.instance.prefer-ip-address=true
+
+# Fetch registry from Eureka server
+eureka.client.fetch-registry=true
+
+# Register this service with Eureka server
+eureka.client.register-with-eureka=true
+
+# Eureka server URL
+# For Docker: http://eureka-server:8085/eureka
+# For localhost: http://localhost:8085/eureka
+eureka.client.service-url.defaultZone=http://localhost:8085/eureka
+
+# Instance ID format
+# eureka.instance.instance-id=${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+# Lease renewal interval (in seconds)
+# eureka.instance.lease-renewal-interval-in-seconds=30
+
+# Lease expiration duration (in seconds)
+# eureka.instance.lease-expiration-duration-in-seconds=90
+
+# -----------------------------------------
+# Distributed Tracing Configuration
+# -----------------------------------------
+# Zipkin server URL for distributed tracing
+# For Docker: http://zipkin:9411
+# For localhost: http://localhost:9411
+spring.zipkin.base-url=http://localhost:9411
+
+# Sampling probability (1.0 = 100% of requests are traced)
+# Reduce this value in production (e.g., 0.1 for 10%)
+spring.sleuth.sampler.probability=1.0
+
+# -----------------------------------------
+# Logging Configuration
+# -----------------------------------------
+# Logging level for the application
+# logging.level.root=INFO
+# logging.level.in.garvit.tasks=DEBUG
+# logging.level.org.springframework.data.mongodb=DEBUG
+# logging.level.org.springframework.cloud.netflix.eureka=DEBUG
+
+# Logging pattern
+# logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+
+# -----------------------------------------
+# Actuator Configuration
+# -----------------------------------------
+# Expose all actuator endpoints (for monitoring)
+# management.endpoints.web.exposure.include=*
+# management.endpoint.health.show-details=always
+
+# -----------------------------------------
+# Feign Client Configuration
+# -----------------------------------------
+# Connection timeout for Feign clients (in milliseconds)
+# feign.client.config.default.connectTimeout=5000
+
+# Read timeout for Feign clients (in milliseconds)
+# feign.client.config.default.readTimeout=5000
+
+# Log level for Feign clients
+# logging.level.in.garvit.tasks.service.UserService=DEBUG
+
+# -----------------------------------------
+# Spring Boot DevTools Configuration
+# -----------------------------------------
+# Enable automatic restart on code changes (development only)
+# spring.devtools.restart.enabled=true
+
+# -----------------------------------------
+# Jackson Configuration
+# -----------------------------------------
+# Date format for JSON serialization/deserialization/home/garvitpathak27/project/spring-micro-websocket-chat
+# spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss
+# spring.jackson.time-zone=UTC
+
+# -----------------------------------------
+# CORS Configuration (if needed)
+# -----------------------------------------
+# Allowed origins for CORS
+# cors.allowed-origins=http://localhost:3000,http://localhost:4200
+
+# -----------------------------------------
+# Docker Environment Variables Override
+# -----------------------------------------
+# When running in Docker, these can be overridden using environment variables:
+# - SPRING_DATA_MONGODB_URI
+# - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+# - SPRING_ZIPKIN_BASE_URL
+# - SERVER_PORT

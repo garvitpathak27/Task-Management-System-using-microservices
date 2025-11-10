@@ -1,5 +1,8 @@
 server:
   port: 8090
+  tomcat:
+    max-threads: 200
+    connection-timeout: 5s
 
 spring:
   application:
@@ -18,28 +21,93 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/auth/**, /users/**, /api/users/**, /
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/userServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                
         - id: TASK-SERVICE
           uri: lb://TASK-SERVICE
           predicates:
             - Path=/api/tasks/**, /tasks/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: taskServiceCircuitBreaker
+                fallbackUri: forward:/taskServiceFallback
+            
         - id: TASK-SUBMISSION
           uri: lb://TASK-SUBMISSION
           predicates:
             - Path=/api/submissions/**, /submissions/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: submissionServiceCircuitBreaker
+                fallbackUri: forward:/submissionServiceFallback
+                
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - AddResponseHeader=X-Response-Time, $\{responseTime}
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
+            allowedOrigins: 
+              - "http://frontend:3000"
+              - "http://admin:8080"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - Authorization
+              - Content-Type
+              - X-Requested-With
+            maxAge: 3600
+            allowCredentials: true
 
 eureka:
   instance:
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
       defaultZone: http://eureka-server:8085/eureka
+    registry-fetch-interval-seconds: 30
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuitBreaker:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30000
+        permittedNumberOfCallsInHalfOpenState: 2
+      taskServiceCircuitBreaker:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30000
+        permittedNumberOfCallsInHalfOpenState: 2
+      submissionServiceCircuitBreaker:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30000
+        permittedNumberOfCallsInHalfOpenState: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
