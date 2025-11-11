@@ -35,11 +35,11 @@ public class EurekaInfoController {
         return info;
     }
     
-    @GetMapping("/")
+    @GetMapping("/eureka")
     public Map<String, String> home() {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Eureka Server is running");
-        response.put("dashboard", "http://localhost:" + serverPort + "/");
+        response.put("dashboard", "http://localhost:" + serverPort + "/eureka/");
         return response;
     }
 }

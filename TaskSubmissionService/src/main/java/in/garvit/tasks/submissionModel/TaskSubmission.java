@@ -3,85 +3,54 @@ package in.garvit.tasks.submissionModel;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import in.garvit.tasks.submissionModel.enums.SubmissionStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Document(collection = "taskSubmission")
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "taskSubmission")
 @CompoundIndex(def = "{'taskId': 1, 'userId': 1}")
-
 public class TaskSubmission {
-	
+
 	@Id
 	private String id;
-	
+
 	@Indexed
 	private String taskId;
-	
-	private String githubLink;
-	
+
 	@Indexed
 	private String userId;
-	
-	private String status = "PENDING";
-	
-	private LocalDateTime submissionTime;
-	
-	
 
-	public LocalDateTime getSubmissionTime() {
-		return submissionTime;
+	@Builder.Default
+	private SubmissionStatus status = SubmissionStatus.PENDING;
+
+	private String content;
+
+	@Builder.Default
+	private LocalDateTime submittedAt = LocalDateTime.now();
+
+	@LastModifiedDate
+	private LocalDateTime updatedAt;
+
+	public void markStatus(SubmissionStatus newStatus) {
+		this.status = newStatus;
+		this.updatedAt = LocalDateTime.now();
 	}
 
-	public void setSubmissionTime(LocalDateTime submissionTime) {
-		this.submissionTime = submissionTime;
+	public void refreshContent(String newContent) {
+		this.content = newContent;
+		this.updatedAt = LocalDateTime.now();
 	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getGithubLink() {
-		return githubLink;
-	}
-
-	public void setGithubLink(String githubLink) {
-		this.githubLink = githubLink;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	
-
 }

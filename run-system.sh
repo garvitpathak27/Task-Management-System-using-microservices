@@ -1,13 +1,24 @@
 #!/bin/bash
 
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "Starting Task Management System..."
 
-# Build all services first
-./build-all.sh
+"${ROOT_DIR}/build-all.sh"
 
-# Start all containers with Docker Compose
+if command -v docker &>/dev/null && docker compose version &>/dev/null; then
+	DOCKER_COMPOSE_CMD=(docker compose)
+elif command -v docker-compose &>/dev/null; then
+	DOCKER_COMPOSE_CMD=(docker-compose)
+else
+	echo "Error: Docker Compose is not installed." >&2
+	exit 1
+fi
+
 echo "Starting Docker containers..."
-docker-compose up --build -d
+(cd "${ROOT_DIR}" && "${DOCKER_COMPOSE_CMD[@]}" up --build -d)
 
 echo "System is starting up..."
 echo "Services will be available at:"
@@ -19,7 +30,7 @@ echo "- Task Submission Service: http://localhost:8083"
 echo "- MongoDB: localhost:27017"
 echo "- Zipkin: http://localhost:9411"
 
-echo ""
+echo
 echo "Wait for all services to start (about 2-3 minutes)"
-echo "Check status with: docker-compose ps"
-echo "View logs with: docker-compose logs -f [service-name]"
+echo "Check status with: ${DOCKER_COMPOSE_CMD[*]} ps"
+echo "View logs with: ${DOCKER_COMPOSE_CMD[*]} logs -f <service>"

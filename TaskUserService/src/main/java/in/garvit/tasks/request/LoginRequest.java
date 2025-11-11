@@ -1,22 +1,30 @@
 package in.garvit.tasks.request;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Document
 public class LoginRequest {
 
+    @NotBlank
+    @Email
     private String email;
+
+    @NotBlank
     private String password;
 
-    public String getemail() {
+    public LoginRequest() {
+    }
+
+    public LoginRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    public String getEmail() {
         return email;
     }
 
-    public void setUsername(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -27,10 +35,4 @@ public class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
-	public void setemail(String username) {
-		// TODO Auto-generated method stub
-		this.setUsername(username);
-		
-	}
 }

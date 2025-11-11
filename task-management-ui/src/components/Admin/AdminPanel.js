@@ -1,163 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { taskAPI, userAPI, submissionAPI } from '../../services/api';
+import React, { useEffect, useState } from 'react';
+import { submissionAPI, taskAPI, userAPI } from '../../services/api';
+import Loader from '../common/Loader';
+import EmptyState from '../common/EmptyState';
+import { formatDateTime, safeArray } from '../../utils/formatters';
 
 const AdminPanel = () => {
   const [users, setUsers] = useState([]);
   const [submissions, setSubmissions] = useState([]);
-  const [newTask, setNewTask] = useState({
-    title: '',
-    description: '',
-    dueDate: ''
-  });
+  const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
+  const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState('');
+  const [taskError, setTaskError] = useState('');
+  const [creatingTask, setCreatingTask] = useState(false);
 
   useEffect(() => {
-    loadUsers();
-    loadSubmissions();
+    const loadDashboard = async () => {
+      try {
+        setLoading(true);
+        const [usersResponse, submissionsResponse] = await Promise.all([
+          userAPI.getAllUsers(),
+          submissionAPI.getAllSubmissions(),
+        ]);
+        setUsers(safeArray(usersResponse?.data));
+        setSubmissions(safeArray(submissionsResponse?.data));
+      } catch (err) {
+        const message = err?.response?.data?.message ?? 'We were unable to load admin data.';
+        setDashboardError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
   }, []);
 
-  const loadUsers = async () => {
-  try {
-    const response = await userAPI.getAllUsers();
-    // Add safety check here too
-    const usersArray = Array.isArray(response.data) ? response.data : [];
-    setUsers(usersArray);
-  } catch (error) {
-    console.error('Error loading users:', error);
-    setUsers([]);
-  }
-};
+  const handleTaskChange = (event) => {
+    const { name, value } = event.target;
+    setNewTask((prev) => ({ ...prev, [name]: value }));
+  };
 
-
-  const loadSubmissions = async () => {
-  try {
-    const response = await submissionAPI.getAllSubmissions();
-    console.log('📝 AdminPanel submissions response:', response.data);
-    
-    // Add this safety check - ensure we always have an array
-    const submissionsArray = Array.isArray(response.data) ? response.data : [];
-    setSubmissions(submissionsArray);
-  } catch (error) {
-    console.error('Error loading submissions:', error);
-    setSubmissions([]); // Always fallback to empty array
-  }
-};
-
-  const handleCreateTask = async (e) => {
-    e.preventDefault();
+  const handleCreateTask = async (event) => {
+    event.preventDefault();
+    setCreatingTask(true);
+    setTaskError('');
     try {
       await taskAPI.createTask(newTask);
       setNewTask({ title: '', description: '', dueDate: '' });
-      alert('Task created successfully!');
-    } catch (error) {
-      alert('Error creating task');
+    } catch (err) {
+      const message = err?.response?.data?.message ?? 'The task could not be created.';
+      setTaskError(message);
+    } finally {
+      setCreatingTask(false);
     }
   };
 
-  const handleAssignTask = async (taskId, userId) => {
-    try {
-      await taskAPI.assignTask(taskId, userId);
-      alert('Task assigned successfully!');
-    } catch (error) {
-      alert('Error assigning task');
-    }
-  };
+  if (loading) {
+    return <Loader label="Loading admin overview" />;
+  }
 
   return (
-    <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
-      <h2>Admin Panel</h2>
-      
-      {/* Create Task Form */}
-      <div style={{ marginBottom: '30px' }}>
-        <h3>Create New Task</h3>
-        <form onSubmit={handleCreateTask}>
+    <div className="grid" style={{ gap: '2rem' }}>
+      {dashboardError && (
+        <div className="alert alert--error" role="alert">
+          {dashboardError}
+        </div>
+      )}
+      <form className="card form" onSubmit={handleCreateTask} noValidate>
+        <header>
+          <h3 className="section-heading" style={{ marginBottom: '0.25rem' }}>
+            Quick task creation
+          </h3>
+          <p className="section-subheading" style={{ margin: 0 }}>
+            Create work items directly from the admin panel.
+          </p>
+        </header>
+        <div className="form-field">
+          <label className="form-label" htmlFor="admin-task-title">
+            Title
+          </label>
           <input
-            type="text"
-            placeholder="Task Title"
+            id="admin-task-title"
+            className="form-input"
+            name="title"
             value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            onChange={handleTaskChange}
             required
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
           />
+        </div>
+        <div className="form-field">
+          <label className="form-label" htmlFor="admin-task-description">
+            Description
+          </label>
           <textarea
-            placeholder="Task Description"
+            id="admin-task-description"
+            className="form-textarea"
+            name="description"
             value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            onChange={handleTaskChange}
             required
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '80px' }}
+            minLength={10}
           />
+        </div>
+        <div className="form-field">
+          <label className="form-label" htmlFor="admin-task-due-date">
+            Due date
+          </label>
           <input
+            id="admin-task-due-date"
+            className="form-input"
             type="datetime-local"
+            name="dueDate"
             value={newTask.dueDate}
-            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            onChange={handleTaskChange}
           />
-          <button
-            type="submit"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            Create Task
+        </div>
+        {taskError && (
+          <div className="alert alert--error" role="alert">
+            {taskError}
+          </div>
+        )}
+        <div>
+          <button className="button button--primary" type="submit" disabled={creatingTask}>
+            {creatingTask ? 'Creating…' : 'Create task'}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
 
-      {/* Users List */}
-      <div style={{ marginBottom: '30px' }}>
-        <h3>Users</h3>
-        {users.length > 0 ? (
-          <div style={{ display: 'grid', gap: '10px' }}>
+      <section className="card" aria-labelledby="admin-users-heading">
+        <header style={{ marginBottom: '1.25rem' }}>
+          <h3 id="admin-users-heading" className="section-heading" style={{ margin: 0 }}>
+            Team members
+          </h3>
+        </header>
+        {users.length ? (
+          <div className="table-list" role="list">
             {users.map((user) => (
-              <div
-                key={user.id}
-                style={{
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  borderRadius: '4px',
-                  backgroundColor: 'white'
-                }}
-              >
-                <strong>{user.fullName}</strong> - {user.email}
-                <span style={{ color: '#666', marginLeft: '10px' }}>
-                  ({user.role || 'User'})
+              <article key={user?.id ?? user?.email} role="listitem" className="card" style={{ boxShadow: 'none' }}>
+                <div style={{ fontWeight: 600 }}>{user?.fullName ?? user?.email}</div>
+                <div style={{ color: 'var(--color-muted)', fontSize: '0.9rem' }}>{user?.email}</div>
+                <span className="status-badge status-badge--muted" style={{ marginTop: '0.5rem' }}>
+                  {user?.role ?? 'User'}
                 </span>
-              </div>
+              </article>
             ))}
           </div>
         ) : (
-          <p>No users found.</p>
+          <EmptyState title="No users" description="Invite colleagues to collaborate on tasks." />
         )}
-      </div>
+      </section>
 
-      {/* Submissions */}
-      <div>
-        <h3>Recent Submissions</h3>
-        {submissions.length > 0 ? (
-          <div style={{ display: 'grid', gap: '10px' }}>
-            {submissions.slice(0, 5).map((submission) => (
-              <div
-                key={submission.id}
-                style={{
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  borderRadius: '4px',
-                  backgroundColor: 'white'
-                }}
-              >
-                <strong>Task ID:</strong> {submission.taskId}<br />
-                <strong>Content:</strong> {submission.content}<br />
-                <strong>Status:</strong> {submission.status}
-              </div>
+      <section className="card" aria-labelledby="admin-submissions-heading">
+        <header style={{ marginBottom: '1.25rem' }}>
+          <h3 id="admin-submissions-heading" className="section-heading" style={{ margin: 0 }}>
+            Recent submissions
+          </h3>
+        </header>
+        {submissions.length ? (
+          <div className="table-list" role="list">
+            {submissions.slice(0, 8).map((submission) => (
+              <article key={submission?.id} role="listitem" className="card" style={{ boxShadow: 'none' }}>
+                <div style={{ display: 'grid', gap: '0.35rem' }}>
+                  <div style={{ fontWeight: 600 }}>Task #{submission?.taskId}</div>
+                  <p style={{ margin: 0, color: 'var(--color-muted)' }}>{submission?.content}</p>
+                </div>
+                <div className="submission-card__meta" style={{ marginTop: '0.85rem' }}>
+                  <span
+                    className={`status-badge ${
+                      submission?.status === 'submitted' ? 'status-badge--success' : 'status-badge--warning'
+                    }`}
+                  >
+                    {submission?.status ?? 'Pending'}
+                  </span>
+                  {submission?.createdAt && <span>{formatDateTime(submission?.createdAt)}</span>}
+                </div>
+              </article>
             ))}
           </div>
         ) : (
-          <p>No submissions found.</p>
+          <EmptyState title="No submissions" description="Submissions will appear here once team members upload work." />
         )}
-      </div>
+      </section>
     </div>
   );
 };

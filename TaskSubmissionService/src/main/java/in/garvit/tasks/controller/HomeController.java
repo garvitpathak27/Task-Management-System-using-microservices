@@ -1,19 +1,26 @@
 package in.garvit.tasks.controller;
 
-import org.springframework.http.HttpStatus;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class HomeController {
-	
-	
-	@GetMapping("/submissions")
-	public ResponseEntity<String> homeController() {
-		return new ResponseEntity<>("Welcome to Task Submission Service",HttpStatus.OK);
-	}
-	
-	
+import in.garvit.tasks.dto.TaskSubmissionResponse;
+import in.garvit.tasks.service.SubmissionService;
+import lombok.RequiredArgsConstructor;
 
+@RestController
+@RequiredArgsConstructor
+public class HomeController {
+
+	private final SubmissionService submissionService;
+
+	@GetMapping("/submissions")
+	public ResponseEntity<List<TaskSubmissionResponse>> listSubmissions() {
+		List<TaskSubmissionResponse> submissions = submissionService.getAllTaskSubmissions().stream()
+			.map(TaskSubmissionResponse::from)
+			.toList();
+		return ResponseEntity.ok(submissions);
+	}
 }

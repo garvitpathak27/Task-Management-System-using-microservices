@@ -1,50 +1,87 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Navbar from './components/Layout/Navbar';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register';
-import Dashboard from './components/Layout/Dashboard';
-import SubmissionList from './components/Submission/SubmissionList';
+import AppLayout from './components/Layout/AppLayout';
+import Loader from './components/common/Loader';
+
+const Login = lazy(() => import('./components/Auth/Login'));
+const Register = lazy(() => import('./components/Auth/Register'));
+const Dashboard = lazy(() => import('./components/Layout/Dashboard'));
+const SubmissionList = lazy(() => import('./components/Submission/SubmissionList'));
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
+    return <Loader label="Preparing your workspace" />;
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  return <AppLayout>{children}</AppLayout>;
+};
+
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return <Loader label="Preparing your workspace" />;
+  }
+
+  if (isAuthenticated) {
+    const redirectTo = location.state?.from?.pathname ?? '/dashboard';
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  return <div className="auth-layout">{children}</div>;
 };
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="App">
-          <Navbar />
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Suspense fallback={<Loader label="Loading interface" />}>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/login"
+              element={(
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              )}
+            />
+            <Route
+              path="/register"
+              element={(
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              )}
+            />
             <Route
               path="/dashboard"
-              element={
+              element={(
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
-              }
+              )}
             />
             <Route
               path="/submissions"
-              element={
+              element={(
                 <ProtectedRoute>
                   <SubmissionList />
                 </ProtectedRoute>
-              }
+              )}
             />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
-        </div>
+        </Suspense>
       </Router>
     </AuthProvider>
   );

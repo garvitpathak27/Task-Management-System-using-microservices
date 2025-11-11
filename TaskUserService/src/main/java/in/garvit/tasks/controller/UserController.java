@@ -1,92 +1,84 @@
 package in.garvit.tasks.controller;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import in.garvit.tasks.exception.UserException;
 import in.garvit.tasks.response.ApiResponse;
+import in.garvit.tasks.response.UserResponse;
 import in.garvit.tasks.service.UserService;
 import in.garvit.tasks.usermodel.User;
-
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-	@Autowired
-	private UserService userService;
-	
+	private static final String CIRCUIT_BREAKER_NAME = "userService";
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
+	private final UserService userService;
+
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
 
-
-	@HystrixCommand(fallbackMethod = "fallbackForGetUserProfile")
+	@CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "fallbackForGetUserProfile")
 	@GetMapping("/profile")
-	public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String jwt) throws UserException {
-		
+	public ResponseEntity<UserResponse> getUserProfile(@RequestHeader("Authorization") String jwt) throws UserException {
+		log.debug("Fetching user profile using JWT");
 		User user = userService.findUserProfileByJwt(jwt);
-		user.setPassword(null);
-		System.out.print(user);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return ResponseEntity.ok(UserResponse.from(user));
 	}
 
-	public ResponseEntity<User> fallbackForGetUserProfile(String jwt, Throwable throwable) {
-		// Handle the fallback logic here
-		// For example, you can return a default user or a custom error message
-		return new ResponseEntity<>(new User(), HttpStatus.INTERNAL_SERVER_ERROR);
+	@SuppressWarnings("unused")
+	private ResponseEntity<UserResponse> fallbackForGetUserProfile(String jwt, Throwable throwable) {
+		log.error("Fallback triggered while fetching user profile", throwable);
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 	}
 
-	@HystrixCommand(fallbackMethod = "fallbackForFindUserById")
-	@GetMapping("/api/users/{userId}")
-	public ResponseEntity<User> findUserById(
-			@PathVariable String userId,
+	@CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "fallbackForFindUserById")
+	@GetMapping("/{userId}")
+	public ResponseEntity<UserResponse> findUserById(@PathVariable String userId,
 			@RequestHeader("Authorization") String jwt) throws UserException {
-
+		log.info("Fetching user with id {}", userId);
 		User user = userService.findUserById(userId);
-		user.setPassword(null);
-
-		return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+		return ResponseEntity.ok(UserResponse.from(user));
 	}
 
-	public ResponseEntity<User> fallbackForFindUserById(String userId, String jwt, Throwable throwable) {
-		// Handle the fallback logic here
-		// For example, you can return a default user or a custom error message
-		return new ResponseEntity<>(new User(), HttpStatus.INTERNAL_SERVER_ERROR);
+	@SuppressWarnings("unused")
+	private ResponseEntity<UserResponse> fallbackForFindUserById(String userId, String jwt, Throwable throwable) {
+		log.error("Fallback triggered while fetching user {}", userId, throwable);
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 	}
 
-
-	@HystrixCommand(fallbackMethod = "fallbackForFindAllUsers")
-	@GetMapping("/api/users")
-	public ResponseEntity<List<User>> findAllUsers(
-
-			@RequestHeader("Authorization") String jwt)  {
-
-		List<User> users = userService.findAllUsers();
-
-
-		return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
-	}
-	public ResponseEntity<List<User>> fallbackForFindAllUsers(String jwt, Throwable throwable) {
-		// Handle the fallback logic here
-		// For example, you can return an empty list or a custom error message
-		return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+	@CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "fallbackForFindAllUsers")
+	@GetMapping
+	public ResponseEntity<List<UserResponse>> findAllUsers(@RequestHeader("Authorization") String jwt) {
+		log.info("Fetching all users");
+		List<UserResponse> users = userService.findAllUsers().stream()
+			.map(UserResponse::from)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(users);
 	}
 
+	@SuppressWarnings("unused")
+	private ResponseEntity<List<UserResponse>> fallbackForFindAllUsers(String jwt, Throwable throwable) {
+		log.error("Fallback triggered while fetching all users", throwable);
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(List.of());
+	}
 
-	@GetMapping()
-	public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String jwt) {
-		try {
-			List<User> users = userService.getAllUser();
-			System.out.print(users);
-			return new ResponseEntity<>(users, HttpStatus.OK);
-		} catch (Exception e) {
-			// Log the exception or handle it based on your application's requirements
-			return new ResponseEntity<>("Error retrieving users", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	@GetMapping("/health")
+	public ResponseEntity<ApiResponse> getUsersHealth() {
+		ApiResponse response = new ApiResponse("User service is available", true);
+		return ResponseEntity.ok(response);
 	}
 }

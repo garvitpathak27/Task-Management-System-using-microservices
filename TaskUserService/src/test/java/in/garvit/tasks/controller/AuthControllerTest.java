@@ -1,9 +1,11 @@
 package in.garvit.tasks.controller;
 
 import in.garvit.tasks.exception.UserException;
-import in.garvit.tasks.repository.UserRepository;
 import in.garvit.tasks.request.LoginRequest;
+import in.garvit.tasks.request.SignupRequest;
 import in.garvit.tasks.response.AuthResponse;
+import in.garvit.tasks.service.UserService;
+import in.garvit.tasks.taskSecurityConfig.JwtProvider;
 import in.garvit.tasks.usermodel.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,107 +18,74 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 class AuthControllerTest {
 
-    @Mock
-    private UserRepository userRepository;
+	@Mock
+	private UserService userService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+	@Mock
+	private AuthenticationManager authenticationManager;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
+	@Mock
+	private JwtProvider jwtProvider;
 
-    @InjectMocks
-    private AuthController authController;
+	@InjectMocks
+	private AuthController authController;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-    @Test
-    void testCreateUserHandler_Success() throws UserException {
-        // Arrange
-        User user = new User();
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-        user.setFullName("Test User");
-        user.setMobile("1234567890");
-        user.setRole("USER");
+	@Test
+	void register_ReturnsToken() throws UserException {
+		SignupRequest request = new SignupRequest("Jane Doe", "jane@example.com", "password123", "ROLE_USER", "1234567890");
+		User createdUser = new User();
+		createdUser.setEmail(request.getEmail());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(createdUser.getEmail(), request.getPassword());
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(null);
-        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(user);
+		when(userService.register(any(SignupRequest.class))).thenReturn(createdUser);
+		when(authenticationManager.authenticate(any())).thenReturn(authentication);
+		when(jwtProvider.generateToken(authentication)).thenReturn("jwt-token");
 
-        // Act
-        ResponseEntity<AuthResponse> responseEntity = authController.createUserHandler(user);
+		ResponseEntity<AuthResponse> response = authController.register(request);
 
-        // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        AuthResponse authResponse = responseEntity.getBody();
-        assertNotNull(authResponse);
-        assertTrue(authResponse.getStatus());
-        assertEquals("Register Success", authResponse.getMessage());
-        assertNotNull(authResponse.getJwt());
-    }
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals("Register success", response.getBody().getMessage());
+		assertEquals("jwt-token", response.getBody().getJwt());
+	}
 
-    @Test
-    void testCreateUserHandler_EmailAlreadyExists() {
-        // Arrange
-        User existingUser = new User();
-        existingUser.setEmail("test@example.com");
+	@Test
+	void signin_ReturnsToken() {
+		LoginRequest request = new LoginRequest("jane@example.com", "password123");
+		Authentication authentication = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
 
-        when(userRepository.findByEmail(existingUser.getEmail())).thenReturn(existingUser);
+		when(authenticationManager.authenticate(any())).thenReturn(authentication);
+		when(jwtProvider.generateToken(authentication)).thenReturn("jwt-token");
 
-        // Act & Assert
-        assertThrows(UserException.class, () -> authController.createUserHandler(existingUser));
-    }
+		ResponseEntity<AuthResponse> response = authController.signin(request);
 
-    @Test
-    void testSignin_Success() {
-        // Arrange
-        String username = "test@example.com";
-        String password = "password";
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setemail(username);
-        loginRequest.setPassword(password);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals("Login success", response.getBody().getMessage());
+	}
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)))
-                .thenReturn(authentication);
+	@Test
+	void signin_InvalidCredentials_Propagates() {
+		LoginRequest request = new LoginRequest("jane@example.com", "wrong-password");
 
-        // Act
-        ResponseEntity<AuthResponse> responseEntity = authController.signin(loginRequest);
+		when(authenticationManager.authenticate(any()))
+			.thenThrow(new BadCredentialsException("Invalid credentials"));
 
-        // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        AuthResponse authResponse = responseEntity.getBody();
-        assertNotNull(authResponse);
-        assertEquals("Login success", authResponse.getMessage());
-        assertNotNull(authResponse.getJwt());
-    }
-
-    @Test
-    void testSignin_InvalidCredentials() {
-        // Arrange
-        String username = "test@example.com";
-        String password = "wrongPassword";
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setemail(username);
-        loginRequest.setPassword(password);
-
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)))
-                .thenThrow(new BadCredentialsException("Invalid username and password"));
-
-        // Act & Assert
-        assertThrows(BadCredentialsException.class, () -> authController.signin(loginRequest));
-    }
+		assertThrows(BadCredentialsException.class, () -> authController.signin(request));
+	}
 }
 

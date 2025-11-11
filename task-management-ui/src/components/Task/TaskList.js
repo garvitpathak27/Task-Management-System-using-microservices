@@ -1,94 +1,103 @@
-import React, { useState, useEffect } from 'react';
-import { taskAPI } from '../../services/api';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { taskAPI } from '../../services/api';
+import Loader from '../common/Loader';
+import EmptyState from '../common/EmptyState';
+import { formatDateTime, safeArray } from '../../utils/formatters';
 
-const TaskList = () => {
+const TaskList = ({ refreshKey = 0 }) => {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [error, setError] = useState('');
+  const [updating, setUpdating] = useState(null);
 
-  useEffect(() => {
-    loadTasks();
-  }, [user]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
-      let response;
-      if (user?.role === 'admin') {
-        response = await taskAPI.getAllTasks();
-      } else {
-        response = await taskAPI.getUserTasks();
-      }
-      setTasks(response.data);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
+      setLoading(true);
+      setError('');
+      const response = user?.role === 'admin' ? await taskAPI.getAllTasks() : await taskAPI.getUserTasks();
+      setTasks(safeArray(response?.data));
+    } catch (err) {
+      const message = err?.response?.data?.message ?? 'We were unable to load your tasks.';
+      setError(message);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.role]);
+
+  useEffect(() => {
+    if (user) {
+      loadTasks();
+    }
+  }, [loadTasks, user, refreshKey]);
 
   const handleCompleteTask = async (taskId) => {
+    setUpdating(taskId);
+    setError('');
     try {
       await taskAPI.completeTask(taskId);
-      loadTasks(); // Refresh tasks
-      alert('Task marked as complete!');
-    } catch (error) {
-      alert('Error completing task');
+      await loadTasks();
+    } catch (err) {
+      const message = err?.response?.data?.message ?? 'We could not update the task.';
+      setError(message);
+    } finally {
+      setUpdating(null);
     }
   };
 
-  if (loading) return <div>Loading tasks...</div>;
+  if (loading) {
+    return <Loader label="Loading tasks" />;
+  }
+
+  if (error && !tasks.length) {
+    return <EmptyState title="We could not load tasks" description={error} />;
+  }
+
+  if (!tasks.length) {
+    return <EmptyState title="No tasks yet" description="Tasks assigned to you will appear here." />;
+  }
 
   return (
-    <div>
-      <h2>My Tasks</h2>
-      {tasks.length === 0 ? (
-        <p>No tasks available.</p>
-      ) : (
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {tasks.map((task) => (
-            <div
-              key={task.id}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '15px',
-                backgroundColor: task.completed ? '#f8f9fa' : 'white'
-              }}
-            >
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <div style={{ marginTop: '10px' }}>
-                <span style={{
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  backgroundColor: task.completed ? '#28a745' : '#ffc107',
-                  color: task.completed ? 'white' : 'black',
-                  fontSize: '12px'
-                }}>
-                  {task.completed ? 'Completed' : 'In Progress'}
-                </span>
-              </div>
-              {!task.completed && (
-                <button
-                  onClick={() => handleCompleteTask(task.id)}
-                  style={{
-                    marginTop: '10px',
-                    padding: '8px 16px',
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Mark Complete
-                </button>
-              )}
-            </div>
-          ))}
+    <div className="task-grid" role="list" aria-label="Task list">
+      {error && (
+        <div className="alert alert--error" role="alert">
+          {error}
         </div>
       )}
+      {tasks.map((task) => {
+        const taskId = task?.id ?? task?.taskId;
+        const isComplete = Boolean(task?.completed);
+        return (
+          <article key={taskId} className="card task-card" role="listitem">
+            <header>
+              <h3 className="task-card__title">{task?.title}</h3>
+              <p style={{ margin: '0 0 1rem', color: 'var(--color-muted)' }}>{task?.description}</p>
+              {task?.dueDate && (
+                <div className="task-card__meta">
+                  <span>Due {formatDateTime(task?.dueDate)}</span>
+                </div>
+              )}
+            </header>
+            <footer className="task-card__meta">
+              <span className={`status-badge ${isComplete ? 'status-badge--success' : 'status-badge--warning'}`}>
+                {isComplete ? 'Completed' : 'In progress'}
+              </span>
+              {!isComplete && (
+                <button
+                  type="button"
+                  className="button button--primary"
+                  onClick={() => handleCompleteTask(taskId)}
+                  disabled={updating === taskId}
+                >
+                  {updating === taskId ? 'Updating…' : 'Mark complete'}
+                </button>
+              )}
+            </footer>
+          </article>
+        );
+      })}
     </div>
   );
 };

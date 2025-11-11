@@ -4,7 +4,6 @@ package in.garvit.tasks.controller;
 import in.garvit.tasks.response.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeControllerTest {
 
-	@Mock
     private HomeController homeController;
 
     @BeforeEach
@@ -26,7 +24,7 @@ class HomeControllerTest {
         ResponseEntity<ApiResponse> responseEntity = homeController.homeController();
 
         // Assert
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         ApiResponse responseBody = responseEntity.getBody();
         assertEquals("Welcome To Task Management Microservice Project", responseBody.getMessage());
         assertTrue(responseBody.isStatus());
@@ -38,7 +36,7 @@ class HomeControllerTest {
         ResponseEntity<ApiResponse> responseEntity = homeController.userHomeController();
 
         // Assert
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         ApiResponse responseBody = responseEntity.getBody();
         assertEquals("Welcome To Task Management User Service", responseBody.getMessage());
         assertTrue(responseBody.isStatus());

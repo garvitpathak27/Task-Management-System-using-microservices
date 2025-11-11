@@ -1,41 +1,30 @@
 #!/bin/bash
 
-echo "Building all microservices..."
+set -euo pipefail
 
-# Build Eureka Server
-echo "Building Eureka Server..."
-cd EurekaServerConfiguration
-./gradlew clean build -x test
-cd ..
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GRADLE_SERVICES=(
+	"EurekaServerConfiguration"
+	"APIGateWay"
+	"TaskService"
+	"TaskSubmissionService"
+	"TaskUserService"
+)
 
-# Build API Gateway
-echo "Building API Gateway..."
-cd APIGateWay
-./gradlew clean build -x test
-cd ..
+echo "Building backend services..."
+for service in "${GRADLE_SERVICES[@]}"; do
+	echo " → ${service}"
+	(
+		cd "${ROOT_DIR}/${service}"
+		./gradlew clean bootJar -x test
+	)
+done
 
-# Build Task Service
-echo "Building Task Service..."
-cd TaskService
-./gradlew clean build -x test
-cd ..
+echo "Building web UI..."
+(
+	cd "${ROOT_DIR}/task-management-ui"
+	npm install
+	npm run build
+)
 
-# Build Task Submission Service
-echo "Building Task Submission Service..."
-cd TaskSubmissionService
-./gradlew clean build -x test
-cd ..
-
-# Build Task User Service
-echo "Building Task User Service..."
-cd TaskUserService
-./gradlew clean build -x test
-cd ..
-
-# If using UserService with Maven instead
-# echo "Building User Service..."
-# cd UserService
-# ./mvnw clean package -DskipTests
-# cd ..
-
-echo "All services built successfully!"
+echo "All components built successfully."

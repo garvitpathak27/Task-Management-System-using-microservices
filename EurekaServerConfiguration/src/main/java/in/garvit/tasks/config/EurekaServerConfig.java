@@ -15,7 +15,7 @@ import java.util.Map;
  * 
  * @author garvitpathak27
  */
-@Configuration
+@Configuration("customEurekaServerConfig")
 public class EurekaServerConfig {
 
     /**

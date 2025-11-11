@@ -13,7 +13,7 @@ import com.netflix.eureka.registry.PeerAwareInstanceRegistry;
  * 
  * @author garvitpathak27
  */
-@Component
+@Component("customEurekaHealthIndicator")
 public class EurekaHealthIndicator implements HealthIndicator {
 
     @Override

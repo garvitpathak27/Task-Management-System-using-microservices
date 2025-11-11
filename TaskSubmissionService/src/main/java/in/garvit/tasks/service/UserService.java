@@ -9,7 +9,7 @@ import in.garvit.tasks.submissionModel.UserDTO;
 
 
 //connect with taskUserService microService
-@FeignClient(name = "USER-SERVICE",url = "http://localhost:8081")
+@FeignClient(name = "USER-SERVICE")
 public interface UserService {
 	
 

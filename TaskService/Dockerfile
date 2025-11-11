@@ -1,15 +1,16 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 
 LABEL maintainer="garvitpathak27"
 LABEL description="Task Management Service - Microservice for managing tasks"
 LABEL version="1.0"
 
-VOLUME /tmp
-
 WORKDIR /app
 
-COPY build/libs/*.jar task-service.jar
+# Install curl for Docker health checks
+RUN apk add --no-cache curl
+
+COPY build/libs/task-service.jar app.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "task-service.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

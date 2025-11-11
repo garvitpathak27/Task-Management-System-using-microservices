@@ -1,6 +1,12 @@
 package in.garvit.tasks.taskSecurityConfig;
 
-public class JwtConstant {
-    public static final String SECRET_KEY = "wpembytrwcvnryxksdbqwjebruyGHyudqgwveytrtrCSnwifoesarjbwe";
-    public static final String JWT_HEADER = "Authorization";
+import org.springframework.http.HttpHeaders;
+
+public final class JwtConstant {
+
+    private JwtConstant() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    public static final String JWT_HEADER = HttpHeaders.AUTHORIZATION;
 }

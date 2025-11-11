@@ -1,54 +1,120 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { taskAPI } from '../../services/api';
 
-const TaskForm = () => {
-  const [task, setTask] = useState({
-    title: '',
-    description: ''
-  });
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    console.log('🔍 Creating task:', task);
-    console.log('🔑 Auth token:', localStorage.getItem('authToken'));
-    
-    const response = await taskAPI.createTask(task);
-    alert('✅ Task created successfully!');
-    setTask({ title: '', description: '' });
-  } catch (error) {
-    console.error('❌ Full error:', error);
-    console.error('📊 Error response:', error.response?.data);
-    console.error('🔢 Status code:', error.response?.status);
-    
-    alert('Failed to create task. Check console and backend logs.');
-  }
+const initialTaskState = {
+  title: '',
+  description: '',
+  dueDate: '',
 };
 
+const TaskForm = ({ isAdmin = false, onTaskCreated }) => {
+  const [task, setTask] = useState(initialTaskState);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const helperText = useMemo(() => {
+    if (!isAdmin) {
+      return 'Only administrators can create official tasks. Submit details and an administrator will review the request.';
+    }
+    return 'Provide a short, action-oriented title and outline the expected outcome.';
+  }, [isAdmin]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setTask((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      if (!isAdmin) {
+        throw new Error('Only administrators can create new tasks.');
+      }
+
+      await taskAPI.createTask(task);
+      setSuccess('Task created successfully.');
+      setTask(initialTaskState);
+      onTaskCreated?.();
+    } catch (err) {
+      const message = err?.response?.data?.message ?? 'We could not create the task. Please try again later.';
+      setError(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div style={{ backgroundColor: '#f0f8ff', padding: '20px', margin: '20px 0' }}>
-      <h3>Create New Task</h3>
-      <form onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit} noValidate>
+      <div className="form-field">
+        <label className="form-label" htmlFor="task-title">
+          Task title
+        </label>
         <input
+          id="task-title"
+          className="form-input"
           type="text"
-          placeholder="Task Title"
+          name="title"
           value={task.title}
-          onChange={(e) => setTask({...task, title: e.target.value})}
-          style={{ width: '100%', padding: '10px', margin: '10px 0' }}
+          onChange={handleChange}
+          placeholder="e.g. Publish weekly product update"
+          maxLength={120}
+          required
         />
+      </div>
+
+      <div className="form-field">
+        <label className="form-label" htmlFor="task-description">
+          Description
+        </label>
         <textarea
-          placeholder="Task Description"
+          id="task-description"
+          className="form-textarea"
+          name="description"
           value={task.description}
-          onChange={(e) => setTask({...task, description: e.target.value})}
-          style={{ width: '100%', padding: '10px', margin: '10px 0', height: '80px' }}
+          onChange={handleChange}
+          placeholder="Share the context, deliverables, and any helpful resources for this task."
+          required
+          minLength={10}
         />
-        <button type="submit" style={{ padding: '10px 20px', background: 'green', color: 'white' }}>
-          Create Task
+        <span className="form-helper">{helperText}</span>
+      </div>
+
+      <div className="form-field">
+        <label className="form-label" htmlFor="task-due-date">
+          Due date
+        </label>
+        <input
+          id="task-due-date"
+          className="form-input"
+          type="datetime-local"
+          name="dueDate"
+          value={task.dueDate}
+          onChange={handleChange}
+        />
+      </div>
+
+      {error && (
+        <div className="alert alert--error" role="alert">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="alert alert--success" role="status">
+          {success}
+        </div>
+      )}
+
+      <div>
+        <button className="button button--primary" type="submit" disabled={submitting}>
+          {submitting ? 'Creating task…' : isAdmin ? 'Create task' : 'Submit for review'}
         </button>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

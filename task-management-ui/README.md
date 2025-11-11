@@ -1,70 +1,123 @@
-# Getting Started with Create React App
+<div align="center">
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Task Management UI
 
-## Available Scripts
+A React web client for the Task Management System microservices stack. It gives administrators and collaborators a clean workspace to manage tasks, review submissions, and collaborate securely.
 
-In the project directory, you can run:
+</div>
 
-### `npm start`
+## Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Role-based dashboard** surfaces personalised task feeds and quick admin tools.
+- **Task lifecycle management** lets admins create, assign, and complete work with a single click.
+- **Submission tracking** provides a central place to review deliverables and status updates.
+- **Responsive UI** built with reusable components, modern accessibility patterns, and mobile-friendly layouts.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+- **Framework:** React 18 (Create React App)
+- **Routing:** React Router v6
+- **HTTP:** Axios with request interceptors for JWT auth
+- **State Management:** React Context + hooks for auth, local component state elsewhere
+- **Styling:** Custom CSS modules with design tokens and utility classes
+- **Testing:** React Testing Library + Jest (CRA defaults)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### 1. Install dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Configure environment variables
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Create a `.env` file from the provided template:
 
-### `npm run eject`
+```bash
+cp .env.example .env
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `REACT_APP_API_BASE_URL` | `http://localhost:8090` | Base URL for the API Gateway that proxies requests to auth, user, task, and submission services. |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> The UI reads these variables at build time. Restart the dev server after editing `.env`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Run locally
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+- Opens http://localhost:3000
+- Proxies API calls to `REACT_APP_API_BASE_URL`
+- Auto-reloads on code changes
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4. Run tests
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm test
+```
 
-### Code Splitting
+### 5. Build for production
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm run build
+```
 
-### Analyzing the Bundle Size
+Outputs an optimised bundle to `build/` ready for static hosting.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Project Structure
 
-### Making a Progressive Web App
+```
+task-management-ui/
+├── public/               # Static assets served by CRA
+├── src/
+│   ├── components/
+│   │   ├── Admin/        # Admin-specific panels
+│   │   ├── Auth/         # Login & registration screens
+│   │   ├── Layout/       # App-wide layout primitives (AppLayout, Navbar, Dashboard)
+│   │   ├── Submission/   # Submission list & form
+│   │   ├── Task/         # Task CRUD and detail components
+│   │   └── common/       # Reusable UI primitives (Loader, EmptyState, PageSection)
+│   ├── context/          # React Context providers (AuthContext)
+│   ├── hooks/            # Reusable hooks (useAsync, etc.)
+│   ├── services/         # Axios instance and API helpers
+│   ├── styles/           # Global theme variables and layout styles
+│   ├── utils/            # Formatting helpers
+│   ├── App.js            # Route definitions with protected/public guards
+│   ├── index.js          # Entry point
+│   └── ...
+├── .env.example          # Environment variable template
+├── package.json
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Common Commands
 
-### Advanced Configuration
+- `npm start` — Launch dev server (port 3000)
+- `npm test` — Run Jest + React Testing Library suite
+- `npm run build` — Create production build
+- `npm run eject` — Expose CRA build config (irreversible; avoid unless necessary)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Error Fix Summary
 
-### Deployment
+- **Dependency alignment:** Downgraded React 19 beta packages to stable React 18 + React Router 6 to restore compatibility with `react-scripts`.
+- **API resilience:** Centralised Axios base URL via env vars, normalised paths, and hardened interceptor behaviour.
+- **Authentication flow:** Refactored context to securely persist JWTs, lazily hydrate the user profile, and gate routes with dedicated public/protected wrappers.
+- **UI overhaul:** Replaced inline styles with design tokens, created reusable layout primitives, introduced loaders/empty states, and improved form accessibility (labels, helper text, aria attributes).
+- **Admin toolkit:** Streamlined admin panel loading, error handling, and quick task creation workflow.
+- **Testing:** Updated default CRA test to target the login view rendered by the new routing guard.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Troubleshooting
 
-### `npm run build` fails to minify
+- **API requests return 401/403:** Confirm `REACT_APP_API_BASE_URL` points to the running API gateway and that the JWT returned from `/auth/signin` is valid.
+- **CORS errors in development:** Ensure the gateway includes `http://localhost:3000` in its allowed origins or run the UI behind the same domain via reverse proxy.
+- **Blank screen after login:** Inspect browser dev tools for network failures. Missing profile endpoint `/api/users/profile` responses will sign the user out to prevent corrupted sessions.
+- **npm audit warnings:** `react-scripts` and transitive dependencies may trigger advisories. Mitigate upstream or upgrade to Vite/CRA alternatives if security policies require zero advisories.
+- **Styles not updating:** CRA caches `.env` and CSS. Restart `npm start` after editing environment variables or theme tokens.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Contributing
+
+Please format code with the included ESLint/Prettier rules (CRA defaults) and keep UI primitives in `components/common` to encourage reuse. Submit PRs with screenshots for notable UI changes.

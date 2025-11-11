@@ -14,7 +14,7 @@ import in.garvit.tasks.taskModel.UserDTO;
  * 
  * @author garvitpathak27
  */
-@FeignClient(name = "USER-SERVICE", url = "${services.user-service.url:http://localhost:8081}", path = "/api/users")
+@FeignClient(name = "USER-SERVICE", path = "/api/users")
 public interface UserService {
 
 	/**

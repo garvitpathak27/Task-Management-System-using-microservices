@@ -1,87 +1,75 @@
 server:
-  port: 8090
+  port: ${SERVER_PORT:8090}
   tomcat:
     max-threads: 200
     connection-timeout: 5s
 
 spring:
   application:
-    name: API-GATEWAY-SERVER
+    name: ${SPRING_APP_NAME:API-GATEWAY-SERVER}
   zipkin:
-    base-url: http://localhost:9411
+    base-url: ${ZIPKIN_BASE_URL:http://localhost:9411}
   sleuth:
     sampler:
-      probability: 1.0
+      probability: ${ZIPKIN_SAMPLER_PROBABILITY:1.0}
   cloud:
     gateway:
       routes:
-        - id: USER-SERVICE
+        - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/auth/**, /users/**, /api/users/**, /
+            - Path=/auth/**,/users/**,/api/users/**,/
           filters:
             - name: CircuitBreaker
               args:
                 name: userServiceCircuitBreaker
-                fallbackUri: forward:/userServiceFallback
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
-            - name: RetryFilter
+                fallbackUri: forward:/fallback/users
+            - name: Retry
               args:
                 retries: 3
                 statuses: BAD_GATEWAY
-                
-        - id: TASK-SERVICE
+
+        - id: task-service
           uri: lb://TASK-SERVICE
           predicates:
-            - Path=/api/tasks/**, /tasks/**
+            - Path=/api/tasks/**,/tasks/**
           filters:
             - name: CircuitBreaker
               args:
                 name: taskServiceCircuitBreaker
-                fallbackUri: forward:/taskServiceFallback
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
-                
-        - id: TASK-SUBMISSION
+                fallbackUri: forward:/fallback/tasks
+
+        - id: task-submission-service
           uri: lb://TASK-SUBMISSION
           predicates:
-            - Path=/api/submissions/**, /submissions/**
+            - Path=/api/submissions/**,/submissions/**
           filters:
             - name: CircuitBreaker
               args:
                 name: submissionServiceCircuitBreaker
-                fallbackUri: forward:/submissionServiceFallback
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
-                
+                fallbackUri: forward:/fallback/submissions
+
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-        - AddResponseHeader=X-Response-Time, $\{responseTime}
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: 
-              - "http://localhost:3000"
-              - "http://localhost:8080"
+            allowedOrigins:
+              - ${GATEWAY_ALLOWED_ORIGIN_1:http://localhost:3000}
+              - ${GATEWAY_ALLOWED_ORIGIN_2:http://localhost:8080}
             allowedMethods:
               - GET
               - POST
               - PUT
+              - PATCH
               - DELETE
               - OPTIONS
             allowedHeaders:
               - Authorization
               - Content-Type
               - X-Requested-With
-            maxAge: 3600
             allowCredentials: true
+            maxAge: 3600
 
 eureka:
   instance:
@@ -91,7 +79,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8085/eureka
+      defaultZone: ${EUREKA_SERVER_URI:http://localhost:8085/eureka}
     registry-fetch-interval-seconds: 30
 
 resilience4j:
@@ -100,17 +88,17 @@ resilience4j:
       userServiceCircuitBreaker:
         slidingWindowSize: 10
         failureRateThreshold: 50
-        waitDurationInOpenState: 30000
+        waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 2
       taskServiceCircuitBreaker:
         slidingWindowSize: 10
         failureRateThreshold: 50
-        waitDurationInOpenState: 30000
+        waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 2
       submissionServiceCircuitBreaker:
         slidingWindowSize: 10
         failureRateThreshold: 50
-        waitDurationInOpenState: 30000
+        waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 2
 
 management:

@@ -1,19 +1,14 @@
 version: '3.8'
 
 services:
-  # MongoDB Database
-  mongodb:
-    image: mongo:7.0
-    container_name: task-management-mongodb
+  mongo:
+    image: mongo:6.0
+    container_name: task-management-mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
     volumes:
-      - mongodb_data:/data/db
-      - ./mongodb-init:/docker-entrypoint-initdb.d
+      - mongo-data:/data/db
     networks:
       - task-management-network
     healthcheck:
@@ -22,7 +17,6 @@ services:
       timeout: 10s
       retries: 5
 
-  # Zipkin for Distributed Tracing
   zipkin:
     image: openzipkin/zipkin:latest
     container_name: task-management-zipkin
@@ -32,7 +26,6 @@ services:
     networks:
       - task-management-network
 
-  # Eureka Server for Service Discovery
   eureka-server:
     build:
       context: ./EurekaServerConfiguration
@@ -42,17 +35,17 @@ services:
     ports:
       - "8085:8085"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      ZIPKIN_BASE_URL: http://zipkin:9411
     networks:
       - task-management-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8085/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
-  # User Service
   user-service:
     build:
       context: ./TaskUserService
@@ -62,22 +55,25 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_SERVER_URI: http://eureka-server:8085/eureka
+      MONGODB_URI: mongodb://mongo:27017/users
+      ZIPKIN_BASE_URL: http://zipkin:9411
+      TASK_ALLOWED_ORIGINS: http://task-management-ui:3000,http://localhost:3000
     depends_on:
-      mongodb:
+      mongo:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
     networks:
       - task-management-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
-  # Task Service
   task-service:
     build:
       context: ./TaskService
@@ -87,22 +83,24 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_SERVER_URI: http://eureka-server:8085/eureka
+      MONGODB_URI: mongodb://mongo:27017/tasks
+      ZIPKIN_BASE_URL: http://zipkin:9411
     depends_on:
-      mongodb:
+      mongo:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
     networks:
       - task-management-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8082/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
-  # Task Submission Service
   task-submission-service:
     build:
       context: ./TaskSubmissionService
@@ -112,22 +110,24 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_SERVER_URI: http://eureka-server:8085/eureka
+      MONGODB_URI: mongodb://mongo:27017/submissions
+      ZIPKIN_BASE_URL: http://zipkin:9411
     depends_on:
-      mongodb:
+      mongo:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
     networks:
       - task-management-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8083/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
-  # API Gateway
   api-gateway:
     build:
       context: ./APIGateWay
@@ -137,7 +137,11 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_SERVER_URI: http://eureka-server:8085/eureka
+      ZIPKIN_BASE_URL: http://zipkin:9411
+      GATEWAY_ALLOWED_ORIGIN_1: http://task-management-ui:3000
+      GATEWAY_ALLOWED_ORIGIN_2: http://localhost:3000
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -150,14 +154,14 @@ services:
     networks:
       - task-management-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8090/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
 
 volumes:
-  mongodb_data:
+  mongo-data:
     driver: local
 
 networks:
