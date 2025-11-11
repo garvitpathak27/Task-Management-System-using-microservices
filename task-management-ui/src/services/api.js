@@ -1,6 +1,25 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:8090';
+// Read base URL from env (build-time). Provide a safe fallback and normalize a few
+// common misconfigurations (e.g. ":8090" or missing protocol).
+let API_BASE_URL = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:8090';
+
+// Normalization helpers:
+const normalizeBaseUrl = (raw) => {
+  if (!raw) return 'http://localhost:8090';
+  // If user provided a port-only like ":8090", prepend localhost
+  if (raw.startsWith(':')) return `http://localhost${raw}`;
+  // If no protocol specified but contains host (e.g. "localhost:8090"), add http://
+  if (!/^https?:\/\//i.test(raw)) return `http://${raw}`;
+  return raw;
+};
+
+API_BASE_URL = normalizeBaseUrl(API_BASE_URL);
+// Helpful debug info during development (will appear in browser console)
+if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line no-console
+  console.debug('[api] Using API_BASE_URL =', API_BASE_URL);
+}
 const AUTH_TOKEN_KEY = 'authToken';
 
 const api = axios.create({
