@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { isAdmin as checkIsAdmin } from '../../utils/roleUtils';
 import PageSection from '../common/PageSection';
 import TaskForm from '../Task/TaskForm';
 import TaskList from '../Task/TaskList';
@@ -7,7 +8,7 @@ import AdminPanel from '../Admin/AdminPanel';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = checkIsAdmin(user);
   const [taskRefreshKey, setTaskRefreshKey] = useState(0);
 
   return (

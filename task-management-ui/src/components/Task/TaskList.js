@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { isAdmin as checkIsAdmin } from '../../utils/roleUtils';
 import { taskAPI } from '../../services/api';
 import Loader from '../common/Loader';
 import EmptyState from '../common/EmptyState';
@@ -16,7 +17,7 @@ const TaskList = ({ refreshKey = 0 }) => {
     try {
       setLoading(true);
       setError('');
-      const response = user?.role === 'admin' ? await taskAPI.getAllTasks() : await taskAPI.getUserTasks();
+      const response = checkIsAdmin(user) ? await taskAPI.getAllTasks() : await taskAPI.getUserTasks();
       setTasks(safeArray(response?.data));
     } catch (err) {
       const message = err?.response?.data?.message ?? 'We were unable to load your tasks.';

@@ -8,6 +8,7 @@ const Register = () => {
     email: '',
     password: '',
     mobile: '',
+    role: 'ROLE_CUSTOMER', // Default role
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -105,6 +106,23 @@ const Register = () => {
             autoComplete="tel"
             required
           />
+        </div>
+        <div className="form-field">
+          <label className="form-label" htmlFor="role">
+            Role
+          </label>
+          <select
+            id="role"
+            className="form-input"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="ROLE_CUSTOMER">Team Member</option>
+            <option value="ROLE_ADMIN">Administrator</option>
+          </select>
+          <span className="form-helper">Select Administrator to create and manage tasks for the team.</span>
         </div>
         {error && (
           <div className="alert alert--error" role="alert">

@@ -32,12 +32,9 @@ const TaskForm = ({ isAdmin = false, onTaskCreated }) => {
     setSuccess('');
 
     try {
-      if (!isAdmin) {
-        throw new Error('Only administrators can create new tasks.');
-      }
-
       await taskAPI.createTask(task);
-      setSuccess('Task created successfully.');
+      const message = isAdmin ? 'Task created successfully.' : 'Task submitted for review successfully.';
+      setSuccess(message);
       setTask(initialTaskState);
       onTaskCreated?.();
     } catch (err) {

@@ -7,8 +7,6 @@ server:
 spring:
   application:
     name: ${SPRING_APP_NAME:API-GATEWAY-SERVER}
-  profiles:
-    active: docker
   zipkin:
     base-url: ${ZIPKIN_BASE_URL:http://zipkin:9411}
   sleuth:
